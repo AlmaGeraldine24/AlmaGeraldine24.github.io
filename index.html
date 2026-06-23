@@ -482,7 +482,7 @@ footer p{font-size:.825rem;color:var(--text-muted);}
         <p class="hero-headline">Industrial Engineering Student · AI, ML & Data Analytics Enthusiast</p>
         <p class="hero-bio">
           Passionate about transforming data into actionable insights through machine learning and analytics.
-          Based in Ambon, Indonesia, building intelligent solutions that bridge engineering and AI.
+          Based in Ambon, Indonesia — building intelligent solutions that bridge engineering and AI.
         </p>
         <div class="hero-cta">
           <a href="#projects" class="btn btn-primary">
@@ -731,28 +731,28 @@ footer p{font-size:.825rem;color:var(--text-muted);}
       </div>
 
       <div class="reveal-right">
-        <form id="contactForm" class="contact-form">
+        <div class="contact-form">
           <div class="form-row">
             <div class="form-group">
               <label for="cf-name">Name</label>
-              <input id="cf-name" type="text" name="name" placeholder="Your name" required />
+              <input id="cf-name" type="text" placeholder="Your name" />
             </div>
             <div class="form-group">
               <label for="cf-email">Email</label>
-              <input id="cf-email" type="email" name="email" placeholder="your@email.com" required />
+              <input id="cf-email" type="email" placeholder="your@email.com" />
             </div>
           </div>
           <div class="form-group">
             <label for="cf-subject">Subject</label>
-            <input id="cf-subject" type="text" name="subject" placeholder="What's this about?" />
+            <input id="cf-subject" type="text" placeholder="What's this about?" />
           </div>
           <div class="form-group">
             <label for="cf-msg">Message</label>
-            <textarea id="cf-msg" name="message" rows="5" placeholder="Tell me about your project or idea…" required></textarea>
+            <textarea id="cf-msg" rows="5" placeholder="Tell me about your project or idea…"></textarea>
           </div>
-          <button class="form-submit" type="submit">Send Message →</button>
+          <button class="form-submit" onclick="handleForm()">Send Message →</button>
           <p class="form-note" id="form-feedback"></p>
-        </form>
+        </div>
       </div>
 
     </div>
@@ -761,7 +761,7 @@ footer p{font-size:.825rem;color:var(--text-muted);}
 
 <!-- ── FOOTER ─────────────────────────────────────────────── -->
 <footer>
-  <p>© 2026 Alma Geraldine Hetharie · Ambon, Indonesia</p>
+  <p>© 2026 Alma Geraldine Hetharie · Built with ❤️ in Ambon, Indonesia</p>
 </footer>
 
 <!-- ── BACK TO TOP ────────────────────────────────────────── -->
@@ -830,53 +830,25 @@ const revealObs = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 revealEls.forEach(el => revealObs.observe(el));
 
-/* ── Form handler with fetch to backend ─────────────────── */
-document.getElementById('contactForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
+/* ── Contact form (mailto fallback) ─────────────────────── */
+function handleForm() {
   const name    = document.getElementById('cf-name').value.trim();
   const email   = document.getElementById('cf-email').value.trim();
   const subject = document.getElementById('cf-subject').value.trim();
-  const message = document.getElementById('cf-msg').value.trim();
-  const feedback = document.getElementById('form-feedback');
+  const msg     = document.getElementById('cf-msg').value.trim();
+  const fb      = document.getElementById('form-feedback');
 
-  if (!name || !email || !message) {
-    feedback.textContent = '⚠️ Please fill in name, email, and message.';
-    feedback.style.color = '#EF4444';
+  if (!name || !email || !msg) {
+    fb.textContent = '⚠️ Please fill in name, email, and message.';
+    fb.style.color = '#EF4444';
     return;
   }
-
-  feedback.textContent = 'Sending message...';
-  feedback.style.color = 'var(--text-muted)';
-
-  try {
-    // Ganti URL ini dengan URL backend setelah di-deploy
-    const response = await fetch('http://localhost:3000/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, subject, message }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      feedback.textContent = '✅ ' + result.message;
-      feedback.style.color = '#059669';
-      document.getElementById('contactForm').reset();
-      if (result.previewUrl) {
-        // Tampilkan link preview untuk testing
-        feedback.innerHTML += ` <a href="${result.previewUrl}" target="_blank" style="color:var(--indigo);">Lihat email</a>`;
-      }
-    } else {
-      feedback.textContent = '❌ ' + result.message;
-      feedback.style.color = '#DC2626';
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    feedback.textContent = '❌ Gagal terhubung ke server. Pastikan backend berjalan.';
-    feedback.style.color = '#DC2626';
-  }
-});
+  const body = encodeURIComponent(`Hi Alma,\n\nMy name is ${name}.\n\n${msg}\n\nFrom: ${email}`);
+  const sub  = encodeURIComponent(subject || `Portfolio Contact from ${name}`);
+  window.location.href = `mailto:alma281104@gmail.com?subject=${sub}&body=${body}`;
+  fb.textContent = '✅ Opening your email client…';
+  fb.style.color = 'var(--indigo)';
+}
 </script>
 </body>
 </html>
